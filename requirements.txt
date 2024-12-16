@@ -1,0 +1,6 @@
+# Core Data Processing
+pyspark==3.5.0
+findspark
+
+
+
