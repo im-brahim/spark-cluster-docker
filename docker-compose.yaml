@@ -8,7 +8,7 @@ services:
       volumes:
         - ./jars:/opt/spark/jars
         - ./notebooks:/home/jovyan/work/notebooks
-        - ./logs:/opt/spark/logs
+        - ./logs:/home/jovyan/work/logs
       #  - ./data:/home/jovyan/work/data
       command: >
           bash -c "start-notebook.sh --NotebookApp.token=''"
@@ -23,15 +23,18 @@ services:
       - SPARK_DRIVER_MEMORY=2g
       - SPARK_DRIVER_CORES=1
       - SPARK_RPC_AUTHENTICATION_ENABLED=no
-      - SPARK_LOCAL_DIRS=/opt/spark/logs     
+      #- SPARK_LOCAL_DIRS=/opt/bitnami/spark/logs
+      # ------------ Don't Uncoment This:----------------
+      #- SPARK_HISTORY_OPTS=-Dspark.history.fs.logDirectory=/opt/bitnami/spark/logs
     ports:
       - "8080:8080"
       - "7077:7077"
     volumes:
+      - ./jobs:/opt/spark/jobs
       - ./jars:/opt/spark/jars
       - ./data:/opt/spark/data
-      - ./logs:/opt/spark/logs
-      #- ./conf/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+      # - ./logs:/opt/bitnami/spark/logs
+      #- ./config/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf     
     networks:
       - spark-network
   
@@ -51,7 +54,8 @@ services:
     volumes:
       - ./jars:/opt/spark/jars
       - ./data:/opt/spark/data
-      - ./logs:/opt/spark/logs
+      # - ./logs:/opt/bitnami/spark/logs
+      #- ./config/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
     networks:
       - spark-network
 
@@ -71,7 +75,8 @@ services:
     volumes:
       - ./jars:/opt/spark/jars
       - ./data:/opt/spark/data
-      - ./logs:/opt/spark/logs
+      # - ./logs:/opt/bitnami/spark/logs
+      #- ./config/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
     networks:
       - spark-network
 
@@ -81,8 +86,8 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
-    # volumes:
-    #   - ./minio_data:/data
+    volumes:
+      - ./minio_data:/data
     environment:
       - MINIO_ROOT_USER=minio
       - MINIO_ROOT_PASSWORD=minio123
@@ -91,6 +96,9 @@ services:
     #command: server /data --console-address ":9001"
     networks:
       - spark-network
+
+volumes:
+  minio_data:
 
 networks:
   spark-network:
