@@ -21,6 +21,10 @@ df.cache()
 
 result = df.groupBy("passenger_count").count()
 result.show()
-result.write.parquet("s3a://mybucket/taxi/output")
+print(result.count())
+result.write.mode("overwrite").parquet("s3a://mybucket/taxi/output")
+result.write.mode("overwrite").parquet("/opt/spark/data/output")
+print("SuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuCCeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeSS!! :)")
+
 
 spark.stop()

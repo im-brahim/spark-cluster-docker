@@ -1,8 +1,6 @@
 data/
 jars/
-minio_data/
-spark-apps/
 notebooks/.ipynb_checkpoints
 venv/
 logs/
-requirements/
+result/

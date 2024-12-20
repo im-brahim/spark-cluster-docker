@@ -1,29 +1,12 @@
 services:
 
-  jupyter: 
-      image: jupyter/pyspark-notebook:x86_64-spark-3.5.0  
-      container_name: jupyter
-      ports:
-        - "8888:8888"
-      volumes:
-        - ./jars:/opt/spark/jars
-        - ./notebooks:/home/jovyan/work/notebooks
-        - ./logs:/home/jovyan/work/logs
-      #  - ./data:/home/jovyan/work/data
-      command: >
-          bash -c "start-notebook.sh --NotebookApp.token=''"
-      networks:
-        - spark-network
-
-  spark-master:
+  master:
     image: bitnami/spark:3.5.0
     container_name: master
     environment:
       - SPARK_MODE=master
-      - SPARK_DRIVER_MEMORY=2g
-      - SPARK_DRIVER_CORES=1
-      - SPARK_RPC_AUTHENTICATION_ENABLED=no
       #- SPARK_LOCAL_DIRS=/opt/bitnami/spark/logs
+
       # ------------ Don't Uncoment This:----------------
       #- SPARK_HISTORY_OPTS=-Dspark.history.fs.logDirectory=/opt/bitnami/spark/logs
     ports:
@@ -31,69 +14,58 @@ services:
       - "7077:7077"
     volumes:
       - ./jobs:/opt/spark/jobs
-      - ./jars:/opt/spark/jars
-      - ./data:/opt/spark/data
-      # - ./logs:/opt/bitnami/spark/logs
-      #- ./config/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf     
+      - ./result:/opt/spark/data
+      - ./config/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf 
+      #- ./logs:/opt/bitnami/spark/logs   
     networks:
       - spark-network
   
-  worker-1:
+  worker:
     image: bitnami/spark:3.5.0
-    container_name: worker1
+    hostname: worker
     depends_on:
-      - spark-master
+      - master
     environment:
       - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
-      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_MASTER_URL=spark://master:7077
       - SPARK_WORKER_MEMORY=2g
       - SPARK_WORKER_CORES=2
     ports:
-      - "8081:8081"
+      - "8081-8083:8081"    # Up to 3 Workers
     volumes:
-      - ./jars:/opt/spark/jars
-      - ./data:/opt/spark/data
+      # - ./data/output:/opt/spark/data
+      - ./config/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
       # - ./logs:/opt/bitnami/spark/logs
-      #- ./config/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
     networks:
       - spark-network
 
-  worker-2:
-    image: bitnami/spark:3.5.0
-    container_name: worker2
-    depends_on:
-      - spark-master
-    environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
-      - SPARK_RPC_AUTHENTICATION_ENABLED=no
-      - SPARK_WORKER_MEMORY=2g
-      - SPARK_WORKER_CORES=2
-    ports:
-      - "8082:8081"
-    volumes:
-      - ./jars:/opt/spark/jars
-      - ./data:/opt/spark/data
-      # - ./logs:/opt/bitnami/spark/logs
-      #- ./config/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
-    networks:
-      - spark-network
+  # jupyter: 
+  #     image: jupyter/pyspark-notebook:x86_64-spark-3.5.0  
+  #     container_name: jupyter
+  #     ports:
+  #       - "8888:8888"
+  #     volumes:
+  #       - ./jars:/opt/spark/jars
+  #       - ./notebooks:/home/jovyan/work/notebooks
+  #       # - ./logs:/home/jovyan/work/logs
+  #     #  - ./data:/home/jovyan/work/data
+  #     command: >
+  #         bash -c "start-notebook.sh --NotebookApp.token=''"
+  #     networks:
+  #       - spark-network
 
   minio:
-    image: bitnami/minio:latest
+    image: minio/minio:latest
     container_name: minio
     ports:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - ./minio_data:/data
+      - minio_data:/data
     environment:
       - MINIO_ROOT_USER=minio
       - MINIO_ROOT_PASSWORD=minio123
-      # - MINIO_SCHEME=https
-      # - MINIO_SERVER_URL=https://minio:9000
-    #command: server /data --console-address ":9001"
+    command: server /data --console-address ":9001"
     networks:
       - spark-network
 
