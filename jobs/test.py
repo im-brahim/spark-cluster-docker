@@ -1,30 +1,26 @@
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder \
-    .appName("NYC Taxi Analysis") \
-    .config("spark.hadoop.fs.s3a.endpoint", "http://minio:9000") \
-    .config("spark.hadoop.fs.s3a.access.key", "minio") \
-    .config("spark.hadoop.fs.s3a.secret.key", "minio123") \
-    .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
-    .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false") \
-    .config("spark.hadoop.fs.s3a.path.style.access", "true") \
-    .getOrCreate()
-    #.master("spark://spark-master:7077") \
+spark = SparkSession.builder.appName("NYC Taxi Analysis").getOrCreate()
 
 
 # Set log level to WARN to reduce unnecessary logs
-#spark.sparkContext.setLogLevel("WARN")
-spark
+# spark.sparkContext.setLogLevel("WARN")
 
-df = spark.read.parquet("s3a://mybucket/taxi/input/NYC-Taxi.parquet")
-df.cache()
+# df = spark.read.parquet("s3a://mybucket/taxi/input/NYC-Taxi.parquet")
+# df.cache()
 
-result = df.groupBy("passenger_count").count()
-result.show()
-print(result.count())
-result.write.mode("overwrite").parquet("s3a://mybucket/taxi/output")
-result.write.mode("overwrite").parquet("/opt/spark/data/output")
+# result = df.groupBy("passenger_count").count()
+# result.show()
+# print(result.count())
+
+# result.write.mode("overwrite").parquet("s3a://mybucket/taxi/output")     # df.coalesce(1)
+# result.write.mode("overwrite").parquet("/opt/spark/data/output")
+
+# df = spark.read.parquet("s3a://mybucket/taxi/output")
+# df = spark.read.parquet("/opt/spark/data/output")
+# df.show()
+
+
+
 print("SuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuCCeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeSS!! :)")
-
-
 spark.stop()

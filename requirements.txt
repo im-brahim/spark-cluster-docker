@@ -1,6 +1,2 @@
-# Core Data Processing
+py4j==0.10.9.7
 pyspark==3.5.0
-findspark
-
-
-
