@@ -39,20 +39,20 @@ services:
     networks:
       - spark-network
 
-  # jupyter: 
-  #     image: jupyter/pyspark-notebook:x86_64-spark-3.5.0  
-  #     container_name: jupyter
-  #     ports:
-  #       - "8888:8888"
-  #     volumes:
-  #       - ./jars:/opt/spark/jars
-  #       - ./notebooks:/home/jovyan/work/notebooks
-  #       # - ./logs:/home/jovyan/work/logs
-  #     #  - ./data:/home/jovyan/work/data
-  #     command: >
-  #         bash -c "start-notebook.sh --NotebookApp.token=''"
-  #     networks:
-  #       - spark-network
+  jupyter: 
+      image: jupyter/pyspark-notebook:x86_64-spark-3.5.0  
+      container_name: jupyter
+      ports:
+        - "8888:8888"
+      volumes:
+        - ./jars:/opt/spark/jars
+        - ./notebooks:/home/jovyan/work/notebooks
+        - ./data:/home/jovyan/work/data
+        # - ./logs:/home/jovyan/work/logs
+      command: >
+          bash -c "start-notebook.sh --NotebookApp.token=''"
+      networks:
+        - spark-network
 
   minio:
     image: minio/minio:latest
