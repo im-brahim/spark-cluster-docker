@@ -14,7 +14,7 @@ services:
       - "7077:7077"
     volumes:
       - ./jobs:/opt/spark/jobs
-      - ./result:/opt/spark/data
+      - ./data:/opt/spark/data
       - ./config/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf 
       #- ./logs:/opt/bitnami/spark/logs   
     networks:
@@ -33,7 +33,7 @@ services:
     ports:
       - "8081-8083:8081"    # Up to 3 Workers
     volumes:
-      # - ./data/output:/opt/spark/data
+      - ./data:/opt/spark/data
       - ./config/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
       # - ./logs:/opt/bitnami/spark/logs
     networks:
