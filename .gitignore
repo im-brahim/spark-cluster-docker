@@ -1,7 +1,6 @@
 data/
 jars/
 notebooks/.ipynb_checkpoints
-venv/
 logs/
 result/
 INFO

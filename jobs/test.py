@@ -6,7 +6,7 @@ spark = SparkSession.builder.appName("NYC Taxi Analysis").getOrCreate()
 # Set log level to WARN to reduce unnecessary logs
 # spark.sparkContext.setLogLevel("WARN")
 
-# df = spark.read.parquet("s3a://mybucket/taxi/input/NYC-Taxi.parquet")
+df = spark.read.parquet("s3a://mybucket/taxi/input/NYC-Taxi.parquet")
 # df.cache()
 
 # result = df.groupBy("passenger_count").count()
@@ -18,7 +18,7 @@ spark = SparkSession.builder.appName("NYC Taxi Analysis").getOrCreate()
 
 # df = spark.read.parquet("s3a://mybucket/taxi/output")
 # df = spark.read.parquet("/opt/spark/data/output")
-# df.show()
+df.show()
 
 
 
