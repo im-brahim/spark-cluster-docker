@@ -19,19 +19,19 @@ This repository contains a project to set up a standalone Spark cluster running 
 
 Create the necessary folders in your local like this :
 .
-├── docker-compose.yaml     # Docker Compose file for the entire setup
-├── config/                 # the default config for spark cluster
-│   └── spark-defaults.conf # Configuration file for Spark
-├── data/
-│   └── input               # in case reading data from local
-│   └── output              # To save data locally
-├── jobs/                   # Folder for PySpark job scripts
-│   └── test.py             # Example PySpark job
-├── nootebook/              # Jupyter notebooks for interactive analysis
-├── jars/                   # Folder for additional Spark JAR dependencies
-├── logs/                   # Directory for Spark logs (if enabled)
-├── README.md               # Project documentation
-└── .gitignore             
+- docker-compose.yaml     # Docker Compose file for the entire setup
+- config/                 # the default config for spark cluster
+    - spark-defaults.conf # Configuration file for Spark
+- data/
+    - input               # in case reading data from local
+    - output              # To save data locally
+- jobs/                   # Folder for PySpark job scripts
+    - test.py             # Example PySpark job
+- nootebook/              # Jupyter notebooks for interactive analysis
+- jars/                   # Folder for additional Spark JAR dependencies
+- logs/                   # Directory for Spark logs (if enabled)
+- README.md               # Project documentation
+- .gitignore             
 
 ## Prerequisites
 
