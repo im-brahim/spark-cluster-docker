@@ -43,10 +43,10 @@ Create the necessary folders in your local like this :
 ## Setup Instructions
 
 ### 1. Clone the Repository
-    ```bash
-        git clone https://github.com/im-brahim/spark-cluster-docker.git
-        cd spark-docker-cluster
-    ```
+```bash
+    git clone https://github.com/im-brahim/spark-cluster-docker.git
+    cd spark-docker-cluster
+```
 
 ### 2. Prepare the Environment
 Add datasets to the data/input/ directory or upload them to the MinIO bucket.
