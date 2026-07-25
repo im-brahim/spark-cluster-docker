@@ -1,76 +1,81 @@
 services:
 
-  master:
-    image: bitnami/spark:3.5.0
-    container_name: master
+  spark-master:
+    image: ibrahimelaidouni/my-custom-spark:3.5.0
+    hostname: spark-master
+    container_name:
+      spark-master
     environment:
       - SPARK_MODE=master
-      #- SPARK_LOCAL_DIRS=/opt/bitnami/spark/logs
-
-      # ------------ Don't Uncoment This:----------------
-      #- SPARK_HISTORY_OPTS=-Dspark.history.fs.logDirectory=/opt/bitnami/spark/logs
+      - PYTHONPATH=/opt/spark
     ports:
       - "8080:8080"
       - "7077:7077"
+    env_file:
+      - .env
     volumes:
       - ./jobs:/opt/spark/jobs
-      - ./data:/opt/spark/data
-      - ./config/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf 
-      #- ./logs:/opt/bitnami/spark/logs   
+      - ./common:/opt/spark/common
+      # - ./data:/opt/spark/data
     networks:
       - spark-network
   
-  worker:
-    image: bitnami/spark:3.5.0
-    hostname: worker
+  spark-worker:
+    image: ibrahimelaidouni/my-custom-spark:3.5.0
+    container_name:
+      spark-worker
+    hostname: spark-worker
     depends_on:
-      - master
+      - spark-master
     environment:
       - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://master:7077
-      - SPARK_WORKER_MEMORY=2g
-      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=1g
+      - SPARK_WORKER_CORES=1
+      - PYTHONPATH=/opt/spark
     ports:
       - "8081-8083:8081"    # Up to 3 Workers
+    env_file:
+      - .env
     volumes:
-      - ./data:/opt/spark/data
-      - ./config/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
-      # - ./logs:/opt/bitnami/spark/logs
+      # - ./data:/opt/spark/data
+      - ./common:/opt/spark/common
     networks:
       - spark-network
 
-  jupyter: 
-      image: jupyter/pyspark-notebook:x86_64-spark-3.5.0  
-      container_name: jupyter
+  jupyter-notebook: 
+      image: ibrahimelaidouni/my-custom-jupyter:3.5.0  
+      container_name: jupyter-notebook
+      environment:
+        - PYTHONPATH=/home/jovyan/work/common
       ports:
-        - "8888:8888"
+        - "8889:8888"
+      env_file:
+        - .env
       volumes:
-        - ./jars:/opt/spark/jars
         - ./notebooks:/home/jovyan/work/notebooks
         - ./data:/home/jovyan/work/data
-        # - ./logs:/home/jovyan/work/logs
+        - ./common:/home/jovyan/work/common
       command: >
           bash -c "start-notebook.sh --NotebookApp.token=''"
       networks:
         - spark-network
 
-  minio:
-    image: minio/minio:latest
-    container_name: minio
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - minio_data:/data
-    environment:
-      - MINIO_ROOT_USER=minio
-      - MINIO_ROOT_PASSWORD=minio123
-    command: server /data --console-address ":9001"
-    networks:
-      - spark-network
+  # spark-minio:
+  #   image: minio/minio:latest
+  #   container_name: spark-minio
+  #   ports:
+  #     - "9000:9000"
+  #     - "9001:9001"
+  #   volumes:
+  #     - minio_data:/data
+  #   env_file:
+  #     - .env
+  #   command: server /data --console-address ":9001"
+  #   networks:
+  #     - spark-network
 
-volumes:
-  minio_data:
+# volumes:
+#   minio_data:
 
 networks:
   spark-network:

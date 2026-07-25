@@ -1,12 +1,13 @@
-from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.appName("NYC Taxi Analysis").getOrCreate()
+from common.spark import get_spark
+
+spark = get_spark("NYC Taxi Analysis")
 
 
 # Set log level to WARN to reduce unnecessary logs
 # spark.sparkContext.setLogLevel("WARN")
 
-df = spark.read.parquet("s3a://mybucket/taxi/input/NYC-Taxi.parquet")
+df = spark.read.parquet("s3a://nyc-taxi/input/NYC-Taxi.parquet")
 # df.cache()
 
 # result = df.groupBy("passenger_count").count()
