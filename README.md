@@ -4,6 +4,10 @@ A standalone Apache Spark cluster (master + worker) running in Docker, reading d
  
 I wanted a project focused only on Spark itself — setting up a real cluster, connecting it to cloud storage, and actually using distributed processing, not just importing `pyspark` locally and calling it a day.
  
+## Architecture
+
+![Spark cluster architecture](docs/Diagram.png)
+
 ## What's inside
  
 - Standalone Spark cluster, Spark 3.5.0 (1 master + 1 worker, scalable)
