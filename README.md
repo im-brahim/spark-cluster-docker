@@ -99,11 +99,13 @@ df.show()
 The same `get_spark()` function works the same way in the notebook or with `spark-submit` inside the master container, one shared config, nothing to change between the two.
  
 Don't forget `spark.stop()` when you're done. A Spark session left alive in a notebook keeps holding onto worker resources, if you only have 1 core allocated and forget to stop a session, the next job you run just hangs waiting for a core that's never coming free. Learned this one the hard way.
- 
+  
 ## A couple of things worth knowing
- 
-- If you recreate the `spark-master` container, restart the worker(s) too. A worker connects to the master once at startup, if the master gets a new container it won't notice and just stays disconnected quietly. `docker compose restart spark-worker` fixes it.
-- The S3A jars need to be on the classpath of whichever container actually creates the SparkSession, not the executors. That's why `spark-submit` worked fine from the start (driver runs inside master, which already has the jars) while the notebook needed its own fix (driver runs inside Jupyter's container).
+
+- Early on, I recreated the `spark-master` container mid-debugging and the Master UI showed 0 workers connected — restarting the worker fixed it at the time. When I later tried to reproduce this cleanly (`docker compose up -d --force-recreate spark-master` alone, then just refreshing the UI, nothing else touched), the worker reconnected on its own without any manual restart. Best explanation: Docker Compose's embedded DNS re-resolves the `spark-master` service name fresh on each new connection, and Spark standalone workers already have built-in reconnect logic — they ping the master and re-register if disconnected. So a plain master recreate seems to self-heal. The original issue was likely caused by something else going on at the same time, since I was mid-debugging several things at once. If you ever do see a worker stuck at 0 in the UI, `docker compose restart spark-worker` is still the quick fix.
+
+- The S3A jars need to be on the classpath of both the driver and the executors — the driver uses them to list files and plan partitions, the executors use them to actually read each partition directly from B2. In this setup, master and worker share the same custom Spark image, so both already had the jars. The part that needed a separate fix was the driver when running inside Jupyter's container instead of the master's — since Jupyter uses a different image with a different jar folder.
+
 ## What's next
  
 - Compare speed and resource usage between a local pandas read and this distributed Spark setup, to actually show why distributed processing matters here

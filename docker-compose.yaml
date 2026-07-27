@@ -16,14 +16,11 @@ services:
     volumes:
       - ./jobs:/opt/spark/jobs
       - ./common:/opt/spark/common
-      # - ./data:/opt/spark/data
     networks:
       - spark-network
   
   spark-worker:
     image: ibrahimelaidouni/my-custom-spark:3.5.0
-    container_name:
-      spark-worker
     hostname: spark-worker
     depends_on:
       - spark-master
@@ -33,7 +30,7 @@ services:
       - SPARK_WORKER_CORES=1
       - PYTHONPATH=/opt/spark
     ports:
-      - "8081-8083:8081"    # Up to 3 Workers
+      - "8081-8083:8081"    # Up to 3 Workers or more, just adjust the range of ports
     env_file:
       - .env
     volumes:
